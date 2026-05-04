@@ -21,14 +21,14 @@ export function Nav() {
     <header className="fixed top-0 left-0 right-0 z-50 glass-nav">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Logo />
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition ${
+              className={`px-4 py-2 text-sm rounded-full transition ${
                 pathname === l.to
-                  ? "text-foreground bg-secondary"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -40,22 +40,22 @@ export function Nav() {
           <button
             onClick={toggle}
             aria-label="Toggle theme"
-            className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition"
+            className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition"
           >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
           <Link
             to="/contact"
-            className="hidden md:inline-flex h-10 items-center px-5 rounded-full text-sm font-medium bg-foreground text-background hover:opacity-90 transition"
+            className="hidden md:inline-flex h-9 items-center px-4 rounded-full text-sm font-medium bg-foreground text-background hover:opacity-90 transition"
           >
-            Get in touch
+            Start a project
           </Link>
           <button
-            className="md:hidden w-10 h-10 rounded-full border border-border flex items-center justify-center"
+            className="md:hidden w-9 h-9 rounded-full border border-border flex items-center justify-center"
             onClick={() => setOpen((o) => !o)}
             aria-label="Menu"
           >
-            {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {open ? <X className="w-3.5 h-3.5" /> : <Menu className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
