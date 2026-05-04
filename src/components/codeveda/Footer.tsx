@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Globe, Mail, MessageCircle } from "lucide-react";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -13,7 +13,7 @@ export function Footer() {
             intelligent software for ambitious teams.
           </p>
           <div className="flex gap-3 pt-2">
-            {[Github, Twitter, Linkedin].map((Icon, i) => (
+            {[Globe, Mail, MessageCircle].map((Icon, i) => (
               <a
                 key={i}
                 href="#"
