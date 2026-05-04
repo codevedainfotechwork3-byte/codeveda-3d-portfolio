@@ -60,31 +60,15 @@ function Index() {
           </motion.div>
 
           {/* Headline — editorial mix of sans + serif italic */}
-          <h1 className="font-sans text-[clamp(3rem,9vw,9rem)] leading-[0.9] font-medium tracking-[-0.04em] max-w-6xl">
-            <motion.span
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="block"
-            >
-              Inspired by
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="block"
-            >
-              <span className="font-display italic text-gradient text-glow">knowledge</span>,
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="block"
-            >
-              powered by <span className="font-display italic text-gradient text-glow">AI</span>.
-            </motion.span>
+          <h1 className="text-[clamp(3rem,9vw,9rem)] leading-[0.9] font-medium tracking-[-0.04em] max-w-6xl text-foreground"
+              style={{ fontFamily: 'var(--font-sans)' }}>
+            <span className="block animate-fade-in">Inspired by</span>
+            <span className="block animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
+              <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>knowledge</span>,
+            </span>
+            <span className="block animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+              powered by <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>AI</span>.
+            </span>
           </h1>
 
           <motion.div
