@@ -62,11 +62,11 @@ function Index() {
           {/* Headline — editorial mix of sans + serif italic */}
           <h1 className="text-[clamp(3rem,9vw,9rem)] leading-[0.9] font-medium tracking-[-0.04em] max-w-6xl text-foreground"
               style={{ fontFamily: 'var(--font-sans)' }}>
-            <span className="block animate-fade-in">Inspired by</span>
-            <span className="block animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
+            <span className="block">Inspired by</span>
+            <span className="block">
               <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>knowledge</span>,
             </span>
-            <span className="block animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+            <span className="block">
               powered by <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>AI</span>.
             </span>
           </h1>
