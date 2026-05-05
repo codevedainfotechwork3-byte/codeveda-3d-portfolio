@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Reveal } from "@/components/codeveda/Reveal";
+import { Marquee } from "@/components/codeveda/Marquee";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -28,13 +29,15 @@ const timeline = [
 ];
 
 function About() {
+  const stack = ["React", "TypeScript", "TanStack", "Cloudflare", "Postgres", "OpenAI", "Anthropic", "Three.js", "Vite", "Tailwind", "pgvector", "Stripe"];
   return (
-    <div className="px-6 py-24">
+    <div className="relative px-6 py-24 overflow-hidden">
+      <div className="bg-aurora-live opacity-30" />
       <div className="max-w-7xl mx-auto">
-        <Reveal>
+        <Reveal variant="blur">
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">— About</span>
           <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tighter mt-3 max-w-4xl">
-            A studio for the <span className="text-gradient">thinking machine</span> era.
+            A studio for the <span className="italic text-gradient-animated">thinking machine</span> era.
           </h1>
         </Reveal>
 
@@ -53,6 +56,17 @@ function About() {
               beautifully, and without the agency overhead.
             </p>
           </Reveal>
+        </div>
+
+        {/* Tech marquee */}
+        <div className="mt-24 py-10 border-y border-border">
+          <Marquee>
+            {stack.map((s, i) => (
+              <span key={i} className="font-display italic text-4xl md:text-5xl text-muted-foreground/70 hover:text-foreground transition">
+                {s} <span className="text-[var(--color-glow)] mx-6">✦</span>
+              </span>
+            ))}
+          </Marquee>
         </div>
 
         {/* Values */}
