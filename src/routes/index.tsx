@@ -365,25 +365,13 @@ function Home() {
             {portfolio.map((p, i) => (
               <Reveal key={i} delay={i * 0.06}>
                 <TiltCard intensity={4}>
-                  <div className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-card border border-border">
-                    <img
-                      src={p.img}
-                      alt={p.tag}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-70 group-hover:opacity-90 transition" />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                      <div className="w-16 h-16 rounded-full bg-foreground/90 text-background flex items-center justify-center backdrop-blur">
-                        <Play className="w-5 h-5 ml-1" fill="currentColor" />
-                      </div>
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full bg-background/70 backdrop-blur border border-border">
-                        {p.tag}
-                      </span>
-                      <span className="font-display italic text-sm">Reel #{(i + 1).toString().padStart(2, "0")}</span>
-                    </div>
-                  </div>
+                  <HoverVideoCard
+                    poster={p.img}
+                    videoSrc={REEL_LOOPS[i % REEL_LOOPS.length]}
+                    tag={p.tag}
+                    index={i}
+                    onClick={() => openReel(REEL_LOOPS[i % REEL_LOOPS.length])}
+                  />
                 </TiltCard>
               </Reveal>
             ))}
@@ -456,6 +444,9 @@ function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* ============ PROCESS ============ */}
+      <ProcessTimeline />
 
       {/* ============ PRICING ============ */}
       <section id="pricing" className="relative px-6 py-32">
