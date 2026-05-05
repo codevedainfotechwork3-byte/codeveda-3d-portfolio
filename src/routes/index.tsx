@@ -142,14 +142,51 @@ const faqs = [
 ];
 
 function Home() {
+  const [reelOpen, setReelOpen] = useState(false);
+  const [reelSrc, setReelSrc] = useState(SHOWREEL);
+  const [muted, setMuted] = useState(true);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  const openReel = (src: string) => { setReelSrc(src); setReelOpen(true); };
+
   return (
     <>
+      <ShowreelLightbox open={reelOpen} onClose={() => setReelOpen(false)} src={reelSrc} />
+
       {/* ============ HERO ============ */}
-      <section className="relative min-h-[100vh] overflow-hidden">
-        <div className="absolute inset-0 bg-grid opacity-50" />
+      <section ref={heroRef} className="relative min-h-[100vh] overflow-hidden">
+        {/* Cinematic background video */}
+        <motion.div style={{ y: heroY, scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 -z-10">
+          <video
+            src={HERO_VIDEO}
+            autoPlay
+            muted={muted}
+            loop
+            playsInline
+            preload="metadata"
+            poster={HERO}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
+        </motion.div>
         <div className="absolute inset-0 bg-noise mix-blend-overlay pointer-events-none" />
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
+        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+
+        {/* Mute toggle */}
+        <button
+          onClick={() => setMuted((m) => !m)}
+          aria-label={muted ? "Unmute background" : "Mute background"}
+          className="absolute bottom-6 left-6 z-20 w-11 h-11 rounded-full border border-border bg-background/60 backdrop-blur flex items-center justify-center hover:bg-secondary transition"
+        >
+          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
 
         {/* Floating "only for textile" tag */}
         <motion.div
@@ -205,15 +242,24 @@ function Home() {
               transition={{ duration: 0.7, delay: 0.9 }}
               className="mt-10 flex flex-wrap items-center gap-6"
             >
-              <a
+              <MagneticButton
                 href="#contact"
-                className="group relative inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 hover:border-primary transition"
+                className="group relative inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 bg-background/40 backdrop-blur hover:border-primary transition"
               >
-                <span className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:rotate-45 transition">
+                <span className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition">
                   <ArrowRight className="w-4 h-4" />
                 </span>
                 <span className="font-medium tracking-wide uppercase text-sm">Contact us</span>
-              </a>
+              </MagneticButton>
+              <MagneticButton
+                onClick={() => openReel(SHOWREEL)}
+                className="group inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 bg-background/40 backdrop-blur hover:border-foreground transition"
+              >
+                <span className="w-10 h-10 rounded-full border border-foreground/40 flex items-center justify-center">
+                  <Play className="w-4 h-4 ml-0.5" fill="currentColor" />
+                </span>
+                <span className="font-medium tracking-wide uppercase text-sm">Watch Showreel</span>
+              </MagneticButton>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-primary text-primary" />
