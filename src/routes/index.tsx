@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles, Brain, Code2, Layers, Globe2, Workflow, Shield } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { ArrowUpRight, Sparkles, Brain, Code2, Layers, Globe2, Workflow, Shield, ArrowDown } from "lucide-react";
 import { HeroScene } from "@/components/codeveda/HeroScene";
 import { Reveal } from "@/components/codeveda/Reveal";
+import { AnimatedText } from "@/components/codeveda/AnimatedText";
+import { TiltCard } from "@/components/codeveda/TiltCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,16 +38,24 @@ const work = [
 ];
 
 function Index() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const sceneY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const sceneOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
+  const headlineY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   return (
     <>
       {/* ============ HERO ============ */}
-      <section className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 bg-aurora opacity-60" />
+      <section ref={heroRef} className="relative min-h-screen overflow-hidden">
+        <div className="bg-aurora-live" />
         <div className="absolute inset-0 bg-grid" />
-        <HeroScene />
+        <motion.div style={{ y: sceneY, opacity: sceneOpacity }} className="absolute inset-0">
+          <HeroScene />
+        </motion.div>
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full conic-orb opacity-20 pointer-events-none" />
         <div className="absolute inset-0 bg-noise mix-blend-overlay pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-screen flex flex-col justify-center">
+        <motion.div style={{ y: headlineY }} className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-screen flex flex-col justify-center">
           {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -62,12 +73,17 @@ function Index() {
           {/* Headline — editorial mix of sans + serif italic */}
           <h1 className="text-[clamp(3rem,9vw,9rem)] leading-[0.9] font-medium tracking-[-0.04em] max-w-6xl text-foreground"
               style={{ fontFamily: 'var(--font-sans)' }}>
-            <span className="block">Inspired by</span>
+            <span className="block"><AnimatedText text="Inspired by" /></span>
             <span className="block">
-              <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>knowledge</span>,
+              <span className="italic text-gradient-animated text-glow" style={{ fontFamily: 'var(--font-display)' }}>
+                <AnimatedText text="knowledge" />
+              </span>,
             </span>
             <span className="block">
-              powered by <span className="italic text-gradient text-glow" style={{ fontFamily: 'var(--font-display)' }}>AI</span>.
+              <AnimatedText text="powered by" />{" "}
+              <span className="italic text-gradient-animated text-glow" style={{ fontFamily: 'var(--font-display)' }}>
+                <AnimatedText text="AI." />
+              </span>
             </span>
           </h1>
 
@@ -85,21 +101,38 @@ function Index() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full bg-foreground text-background font-medium hover:opacity-90 transition"
+                className="group relative inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full bg-foreground text-background font-medium overflow-hidden hover:scale-[1.03] transition"
               >
-                Start a project
-                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition duration-300" />
+                <span className="relative z-10">Start a project</span>
+                <ArrowUpRight className="relative z-10 w-4 h-4 group-hover:rotate-45 transition duration-300" />
+                <span className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition" />
               </Link>
               <Link
                 to="/portfolio"
-                className="inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full border border-border bg-background/40 backdrop-blur-md hover:bg-secondary transition font-medium"
+                className="group gradient-border inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full border border-border bg-background/40 backdrop-blur-md hover:bg-secondary transition font-medium"
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 group-hover:rotate-12 transition" />
                 Selected work
               </Link>
             </div>
           </motion.div>
-        </div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4 }}
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground"
+          >
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ArrowDown className="w-4 h-4" />
+            </motion.div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom marquee */}
         <motion.div
@@ -115,7 +148,7 @@ function Index() {
             <div className="flex-1 overflow-hidden marquee-mask">
               <div className="flex gap-12 animate-marquee whitespace-nowrap">
                 {[...clients, ...clients].map((c, i) => (
-                  <span key={i} className="font-display text-2xl text-muted-foreground/60 italic">{c}</span>
+                  <span key={i} className="font-display text-2xl text-muted-foreground/60 italic hover:text-foreground transition">{c}</span>
                 ))}
               </div>
             </div>
@@ -134,9 +167,9 @@ function Index() {
           <Reveal delay={0.1}>
             <p className="font-display text-3xl md:text-5xl lg:text-6xl leading-[1.1] tracking-tight max-w-5xl">
               We believe the next decade of software belongs to{" "}
-              <span className="italic text-gradient">teams that pair</span>{" "}
+              <span className="italic text-gradient-animated">teams that pair</span>{" "}
               deep technical craft with applied artificial intelligence.{" "}
-              <span className="italic text-gradient">We are that team.</span>
+              <span className="italic text-gradient-animated">We are that team.</span>
             </p>
           </Reveal>
         </div>
@@ -165,17 +198,19 @@ function Index() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 border-t border-l border-border">
             {services.map((s, i) => (
               <Reveal key={s.title} delay={i * 0.05}>
-                <div className="group relative border-r border-b border-border p-8 md:p-10 h-full overflow-hidden hover:bg-secondary/40 transition duration-500">
-                  <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[var(--color-glow)]/0 group-hover:bg-[var(--color-glow)]/10 blur-3xl transition duration-700" />
-                  <div className="relative">
-                    <div className="flex items-baseline justify-between mb-12">
-                      <span className="font-mono text-xs text-muted-foreground">{s.n}</span>
-                      <s.icon className="w-5 h-5 text-muted-foreground group-hover:text-[var(--color-glow)] transition" strokeWidth={1.5} />
+                <TiltCard className="h-full" intensity={5}>
+                  <div className="group relative border-r border-b border-border p-8 md:p-10 h-full overflow-hidden hover:bg-secondary/40 transition duration-500">
+                    <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[var(--color-glow)]/0 group-hover:bg-[var(--color-glow)]/15 blur-3xl transition duration-700" />
+                    <div className="relative" style={{ transform: "translateZ(40px)" }}>
+                      <div className="flex items-baseline justify-between mb-12">
+                        <span className="font-mono text-xs text-muted-foreground">{s.n}</span>
+                        <s.icon className="w-5 h-5 text-muted-foreground group-hover:text-[var(--color-glow)] group-hover:scale-125 group-hover:rotate-6 transition duration-500" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="font-display text-3xl md:text-4xl mb-4 leading-tight">{s.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">{s.desc}</p>
                     </div>
-                    <h3 className="font-display text-3xl md:text-4xl mb-4 leading-tight">{s.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">{s.desc}</p>
                   </div>
-                </div>
+                </TiltCard>
               </Reveal>
             ))}
           </div>

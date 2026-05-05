@@ -4,6 +4,7 @@ import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/components/codeveda/ThemeProvider";
 import { Nav } from "@/components/codeveda/Nav";
 import { Footer } from "@/components/codeveda/Footer";
+import { SpotlightCursor } from "@/components/codeveda/SpotlightCursor";
 
 function NotFoundComponent() {
   return (
@@ -47,7 +48,7 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap",
       },
     ],
   }),
@@ -73,6 +74,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <ThemeProvider>
+      <SpotlightCursor />
       <Nav />
       <main className="pt-16">
         <Outlet />
