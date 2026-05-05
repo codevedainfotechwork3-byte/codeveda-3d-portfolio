@@ -246,6 +246,4 @@
   }
   .film-grain, .animate-marquee, .animate-float, .animate-spin-slow, .animate-shimmer { animation: none !important; }
   .spotlight-overlay { display: none !important; }
-@layer utilities {
-  .keep-utilities {}
 }
