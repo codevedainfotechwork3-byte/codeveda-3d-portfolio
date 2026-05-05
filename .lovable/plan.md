@@ -1,52 +1,64 @@
 ## Goal
+Build a Reelwale Studio site that clearly outclasses reelwale.studio — keep the editorial fashion-videography vibe but add cinematic motion, video-first storytelling, and premium micro-interactions the reference site lacks.
 
-Replace the current font system and elevate the site with premium, experiential animations across Hero, Services, About, Portfolio, and Contact.
+## What's missing today vs. the reference
+- Reference uses static oval frames; ours does too. We need real motion.
+- Reference is single-page only, ours has stale `/services` route causing layout mismatch.
+- Hero has no video, no kinetic typography, no scroll choreography.
+- Portfolio grid is flat — no hover preview, no lightbox, no filtering animation.
+- Hydration error in `Footer.tsx` (whitespace next to `<Mail/>` in email line) — fix quietly.
 
-## Typography overhaul
+## Plan
 
-Swap `Instrument Serif` + `Inter Tight` for a more premium, modern pairing loaded via `__root.tsx` (Google Fonts):
+### 1. Cinematic Hero (replaces current hero)
+- Background: looping muted `<video>` (fashion B-roll from a free CDN like Pexels/Coverr) with dark gradient + grain overlay.
+- Headline: kinetic split-text — "Your Story. Frame by Frame." with per-word mask reveal + serif italic accent word that morphs color.
+- Floating oval video portraits (3 ovals) playing short loops at different speeds, with parallax on scroll + mouse.
+- Marquee ribbon under hero: "Fashion · Reels · Editorials · Lookbooks · Campaigns" rotating in opposite directions on two rows.
+- Magnetic primary CTA "Book a Shoot" + secondary "Watch Showreel" that opens a fullscreen video lightbox.
 
-- **Display**: `Fraunces` (variable, optical-size) — sophisticated, contemporary serif with character. Replaces the current generic serif.
-- **Sans**: `Geist` — clean, geometric, used by top-tier product sites (Vercel, Linear-feel).
-- **Mono**: `Geist Mono` for code/labels.
-- Update `--font-display`, `--font-sans`, `--font-mono` in `src/styles.css`.
-- Refine `.font-display` tracking + add an italic display variant utility for tasteful emphasis.
+### 2. Showreel Lightbox
+- Click "Watch Showreel" → full-viewport modal with backdrop blur, autoplaying reel, ESC/click-to-close, framer-motion scale+fade.
 
-## Visual & motion system (added to styles.css)
+### 3. Portfolio — interactive grid
+- Replace static grid with masonry-ish layout where each card is a hover-to-play muted video (poster image until hover).
+- Filter chips animate using `layoutId` (smooth pill movement).
+- Click → lightbox with reel + brand name.
 
-- **Animated aurora/mesh gradient** background with slow drifting blobs (CSS keyframes).
-- **Conic gradient orbs** behind hero and section headers.
-- **Magnetic / spotlight cursor effect** (lightweight component using mouse position → radial gradient overlay).
-- **Scroll-linked reveals** using existing `Reveal.tsx` (framer-motion) — extend with `stagger`, `blur-in`, and `letter-by-letter` text reveal variants.
-- **Tilt-on-hover** cards (framer-motion `useMotionValue` + perspective transform) for Services and Portfolio.
-- **Marquee logos/keywords** strip in About.
-- **Animated underline + arrow shift** on links/buttons.
-- **Noise + grain overlay** layer fixed across pages for tactile feel.
-- **Smooth section transitions** via `AnimatePresence` and route-level fade/slide.
+### 4. Services — scroll-pinned story
+- 3 service blocks ("Outdoor / Indoor / Street") presented as horizontally-scrolling story cards with sticky left text + right image stack that crossfades while scrolling (scroll-linked via `useScroll`).
 
-## Per-page upgrades
+### 5. Process timeline (new section)
+- 4-step animated timeline (Brief → Shoot → Edit → Deliver) with SVG path that draws as user scrolls.
 
-1. **Hero (index.tsx)**: letter-by-letter headline reveal, animated gradient text, subtle parallax on the 3D scene, magnetic CTA buttons, scroll-indicator with bounce.
-2. **Services**: 3D tilt cards, hover-glow border, icon micro-animations on hover, staggered grid entrance.
-3. **About**: animated stat counters, marquee tech stack, image with parallax mask reveal.
-4. **Portfolio**: masonry/bento grid with image zoom + overlay slide-up on hover, filter chips with layoutId animation.
-5. **Contact**: floating-label inputs, animated submit button (state machine: idle → loading → success), live gradient border on focus.
+### 6. Testimonials carousel (new section)
+- Auto-advancing testimonial cards with brand logos, drag-to-swipe, indicator dots.
 
-## New components
+### 7. Pricing — refined
+- Keep 3 tiers but add hover tilt, animated price counter on first view, "Most popular" ribbon with shimmer.
 
-- `src/components/codeveda/TiltCard.tsx` — reusable tilt wrapper.
-- `src/components/codeveda/Marquee.tsx` — infinite scroll strip.
-- `src/components/codeveda/AnimatedText.tsx` — split-text reveal.
-- Extend `Reveal.tsx` with new variants.
+### 8. FAQ — keep but polish
+- Smoother accordion easing, plus icon rotates to minus.
 
-## Files to edit
+### 9. CTA + Footer
+- Big closing CTA band with parallax background image.
+- Fix Footer hydration mismatch (the `<Mail/>` whitespace).
 
-- `src/styles.css` — fonts, new utilities, keyframes.
-- `src/routes/__root.tsx` — Google Fonts links, mount `SpotlightCursor`.
-- `src/routes/index.tsx`, `services.tsx`, `about.tsx`, `portfolio.tsx`, `contact.tsx` — wire new motion components.
-- `src/components/codeveda/HeroScene.tsx` — slight parallax tweak.
+### 10. Global polish
+- Remove leftover `/services` route file (causes confusion; site is single-page with anchors).
+- Custom cursor refinement: grows + label on hover over media ("PLAY" / "VIEW").
+- Page-load intro: brand mark wipe reveal (1.2s) then content fades in.
+- Theme: deepen onyx, warm rose-gold accent, add subtle film-grain animated overlay.
+- Respect `prefers-reduced-motion` everywhere.
+
+## Technical notes
+- Use existing stack: framer-motion, TanStack Start, Tailwind v4, lucide-react.
+- Videos: hotlink small mp4s from coverr.co / pexels (CDN, no upload needed). Add `playsInline muted loop preload="metadata"`.
+- New components: `VideoHero.tsx`, `ShowreelLightbox.tsx`, `HoverVideoCard.tsx`, `ProcessTimeline.tsx`, `Testimonials.tsx`, `IntroOverlay.tsx`, `MagneticButton.tsx`.
+- Fix `Footer.tsx` email line: render `<Mail/> hello@reelwale.studio` without stray text node mismatch (use a single string child, no whitespace siblings).
+- Delete `src/routes/services.tsx` if present; nav links use hash anchors to home sections.
+- No new dependencies required.
 
 ## Out of scope
-
-- No backend/schema changes.
-- No new dependencies (framer-motion + three already installed).
+- CMS / backend (can add later via Lovable Cloud).
+- Real client video assets — placeholders from free stock until user provides reels.
