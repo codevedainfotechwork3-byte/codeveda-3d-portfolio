@@ -694,6 +694,36 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+function FilterChips({ items, active, onChange }: { items: readonly string[]; active: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex flex-wrap justify-center gap-2 mt-10 mb-12">
+      {items.map((f) => {
+        const isActive = f === active;
+        return (
+          <button
+            key={f}
+            onClick={() => onChange(f)}
+            className={`relative px-5 py-2 rounded-full text-sm font-medium border transition ${
+              isActive
+                ? "text-background border-foreground"
+                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+            }`}
+          >
+            {isActive && (
+              <motion.span
+                layoutId="filter-pill"
+                className="absolute inset-0 -z-10 rounded-full bg-foreground"
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              />
+            )}
+            <span className="relative">{f}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function ContactForm() {
   const [sent, setSent] = useState(false);
   return (
