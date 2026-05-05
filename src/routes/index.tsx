@@ -1,214 +1,452 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { ArrowUpRight, Sparkles, Brain, Code2, Layers, Globe2, Workflow, Shield, ArrowDown } from "lucide-react";
-import { HeroScene } from "@/components/codeveda/HeroScene";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight, Phone, Star, Check, Plus, Minus, Play,
+  Camera, Building2, MapPinned, ShoppingBag, Globe, Store, Scissors,
+} from "lucide-react";
 import { Reveal } from "@/components/codeveda/Reveal";
 import { AnimatedText } from "@/components/codeveda/AnimatedText";
 import { TiltCard } from "@/components/codeveda/TiltCard";
+import { Marquee } from "@/components/codeveda/Marquee";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Codeveda — Premium AI-powered IT studio" },
-      { name: "description", content: "Codeveda crafts intelligent software, AI products and digital platforms. Inspired by knowledge, powered by AI." },
-      { property: "og:title", content: "Codeveda — Premium AI-powered IT studio" },
-      { property: "og:description", content: "Inspired by knowledge, powered by AI. We build intelligent software for ambitious teams." },
+      { title: "Reelwale Studio — Fashion Videography & Reels" },
+      { name: "description", content: "Engaging fashion video content under one roof — outdoor, indoor & street shoots for textile garment brands." },
+      { property: "og:title", content: "Reelwale Studio" },
+      { property: "og:description", content: "Unlock your story, frame by frame." },
     ],
   }),
-  component: Index,
+  component: Home,
 });
 
-const clients = ["ATLAS", "LUMEN", "VERDANT", "KAIROS", "PULSE", "MENTORA", "ORION", "NIMBUS", "HELIOS", "VANTA"];
+const HERO = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80";
+const HERO_2 = "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80";
+
+const brands = [
+  "ATELIER", "MAISON", "SAREE.CO", "INDIRA", "KIANA", "RANGREZ", "AURELIA", "VIMARSH",
+  "MEHRUMA", "PAVITRA", "JUPITER", "HALIMA", "MODESTOUZE", "INDIAN RANG",
+];
+
+const portfolio = [
+  { img: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=600&q=80", tag: "Saree" },
+  { img: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=600&q=80", tag: "Bridal Choli" },
+  { img: "https://images.unsplash.com/photo-1617922001439-4a2e6562f328?auto=format&fit=crop&w=600&q=80", tag: "Kurtis" },
+  { img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80", tag: "Western" },
+  { img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80", tag: "Pakistani Suit" },
+  { img: "https://images.unsplash.com/photo-1596993100471-c3905dafa78e?auto=format&fit=crop&w=600&q=80", tag: "Blouse" },
+];
+
+const filters = ["View all", "Saree", "Bridal Choli", "Kurtis", "Western", "Pakistani Suit", "Blouse", "Burkha", "Choli"];
 
 const services = [
-  { n: "01", icon: Brain, title: "Applied AI", desc: "LLM agents, retrieval pipelines, fine-tuned models and AI-native UX that ships to production." },
-  { n: "02", icon: Code2, title: "Engineering", desc: "Edge-native web, mobile and platform infrastructure built with React, TypeScript and modern tooling." },
-  { n: "03", icon: Layers, title: "Product Design", desc: "Research-led design systems, motion and interfaces that feel inevitable from the first touch." },
-  { n: "04", icon: Globe2, title: "Cloud & DevOps", desc: "Scalable architecture, CI/CD, observability and zero-downtime deploys on Cloudflare, AWS and Vercel." },
-  { n: "05", icon: Workflow, title: "Automation", desc: "Connect Stripe, Slack, HubSpot and back-office systems into seamless, intelligent workflows." },
-  { n: "06", icon: Shield, title: "Security", desc: "Threat modelling, audits, SOC2 / GDPR readiness and continuous monitoring." },
+  {
+    icon: Camera,
+    title: "Outdoor Shoot",
+    desc: "From breathtaking backdrops to raw images, we bring perfection in every shot.",
+    img: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    icon: Building2,
+    title: "Indoor Shoot",
+    desc: "Professional photography & videography in elegant studio setups with creative direction.",
+    img: "https://images.unsplash.com/photo-1551803091-e20673f15770?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    icon: MapPinned,
+    title: "Street Shoot",
+    desc: "Capturing urban life — markets, lanes & rooftops — with cinematic storytelling.",
+    img: "https://images.unsplash.com/photo-1485518882345-15568b007407?auto=format&fit=crop&w=600&q=80",
+  },
 ];
 
-const work = [
-  { tag: "Fintech · AI", title: "Atlas Capital", year: "2026", color: "from-violet-500/30 via-fuchsia-500/20 to-transparent" },
-  { tag: "Health · Platform", title: "Lumen Care", year: "2025", color: "from-cyan-500/30 via-blue-500/20 to-transparent" },
-  { tag: "Climate · Data", title: "Verdant Index", year: "2025", color: "from-emerald-500/30 via-teal-500/20 to-transparent" },
-  { tag: "Creative · 3D", title: "Studio Kairos", year: "2024", color: "from-amber-500/30 via-rose-500/20 to-transparent" },
+const pricing = [
+  {
+    name: "Premium Outdoor",
+    price: "₹ 1,499",
+    label: "Single piece",
+    desc: "Customised locations as per your requirements.",
+    perks: ["Film city", "Luxury Resort", "Heritage Palace"],
+    cta: "Book your Shoot",
+    featured: true,
+  },
+  {
+    name: "Indoor Shoot",
+    price: "₹ 799",
+    label: "Single piece",
+    desc: "Elegant studio setups that bring nature's beauty inside.",
+    perks: ["In-studio backdrop", "Floral concept", "Soft lighting"],
+    cta: "Book your Shoot",
+  },
+  {
+    name: "Custom Street",
+    price: "Custom",
+    label: "On request",
+    desc: "We explore dynamic urban environments where city life unfolds.",
+    perks: ["Surat streets", "Markets", "Transport hubs"],
+    cta: "Contact Sales",
+  },
 ];
 
-function Index() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const sceneY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const sceneOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
-  const headlineY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+const audience = [
+  { icon: Globe, label: "Website Owner" },
+  { icon: ShoppingBag, label: "Ecommerce Business" },
+  { icon: Store, label: "Shop Owner" },
+  { icon: Scissors, label: "Fashion Designer" },
+];
+
+const testimonials = [
+  {
+    name: "Pratik Bhagat", brand: "MBC",
+    quote: "Their team's passion for storytelling and commitment to excellence shone through in every aspect of the project.",
+  },
+  {
+    name: "Piyush", brand: "Tikhi Imli",
+    quote: "The ability of Reelwale Studio to capture the essence of our brand and translate it into visually stunning reels is truly remarkable.",
+  },
+  {
+    name: "Rakesh", brand: "kiana.co",
+    quote: "They took the time to understand my vision and brought it to life — the reels have been a game-changer for engagement and sales.",
+  },
+  {
+    name: "Vasu Seti", brand: "SSC",
+    quote: "Working with Reelwale Studio was an absolute pleasure! Their expertise in fashion videography is evident from the first minute.",
+  },
+];
+
+const faqs = [
+  { q: "Do you stitch the blouse in a saree?", a: "Yes — an extra charge will apply for stitching services." },
+  { q: "How long will it take for my product shoot to be delivered?", a: "You will receive your edited content within 5 days of the shoot." },
+  { q: "When do we have to pay for the shoot?", a: "Payment is collected immediately after the shoot is completed." },
+  { q: "Do you travel for outdoor shoots?", a: "Absolutely. We routinely travel across film cities, resorts and heritage palaces." },
+  { q: "What's included in a single-piece shoot?", a: "One garment styled across multiple frames with reels-ready edits and raw footage handover." },
+];
+
+function Home() {
   return (
     <>
       {/* ============ HERO ============ */}
-      <section ref={heroRef} className="relative min-h-screen overflow-hidden">
-        <div className="bg-aurora-live" />
-        <div className="absolute inset-0 bg-grid" />
-        <motion.div style={{ y: sceneY, opacity: sceneOpacity }} className="absolute inset-0">
-          <HeroScene />
-        </motion.div>
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] rounded-full conic-orb opacity-20 pointer-events-none" />
+      <section className="relative min-h-[100vh] overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-50" />
         <div className="absolute inset-0 bg-noise mix-blend-overlay pointer-events-none" />
+        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl" />
 
-        <motion.div style={{ y: headlineY }} className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-screen flex flex-col justify-center">
-          {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex self-start items-center gap-3 px-4 py-2 rounded-full border border-border bg-background/40 backdrop-blur-md text-xs font-mono mb-10"
-          >
-            <span className="relative flex w-2 h-2">
-              <span className="absolute inset-0 rounded-full bg-[var(--color-glow)] animate-ping opacity-60" />
-              <span className="relative rounded-full w-2 h-2 bg-[var(--color-glow)]" />
-            </span>
-            <span className="text-muted-foreground tracking-wider uppercase">Now booking · Q2 2026</span>
-          </motion.div>
-
-          {/* Headline — editorial mix of sans + serif italic */}
-          <h1 className="text-[clamp(3rem,9vw,9rem)] leading-[0.9] font-medium tracking-[-0.04em] max-w-6xl text-foreground"
-              style={{ fontFamily: 'var(--font-sans)' }}>
-            <span className="block"><AnimatedText text="Inspired by" /></span>
-            <span className="block">
-              <span className="italic text-gradient-animated text-glow" style={{ fontFamily: 'var(--font-display)' }}>
-                <AnimatedText text="knowledge" />
-              </span>,
-            </span>
-            <span className="block">
-              <AnimatedText text="powered by" />{" "}
-              <span className="italic text-gradient-animated text-glow" style={{ fontFamily: 'var(--font-display)' }}>
-                <AnimatedText text="AI." />
-              </span>
-            </span>
-          </h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-12 grid md:grid-cols-[1fr_auto] gap-10 items-end max-w-5xl"
-          >
-            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed">
-              Codeveda is an independent IT studio building intelligent products
-              for the companies shaping tomorrow — strategy, engineering and
-              applied AI under one roof.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                to="/contact"
-                className="group relative inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full bg-foreground text-background font-medium overflow-hidden hover:scale-[1.03] transition"
-              >
-                <span className="relative z-10">Start a project</span>
-                <ArrowUpRight className="relative z-10 w-4 h-4 group-hover:rotate-45 transition duration-300" />
-                <span className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition" />
-              </Link>
-              <Link
-                to="/portfolio"
-                className="group gradient-border inline-flex items-center gap-2 h-13 py-3 px-6 rounded-full border border-border bg-background/40 backdrop-blur-md hover:bg-secondary transition font-medium"
-              >
-                <Sparkles className="w-4 h-4 group-hover:rotate-12 transition" />
-                Selected work
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4 }}
-            className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground"
-          >
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <ArrowDown className="w-4 h-4" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        {/* Bottom marquee */}
+        {/* Floating "only for textile" tag */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="absolute bottom-0 left-0 right-0 z-10 border-t border-border/50 bg-background/30 backdrop-blur-md"
+          initial={{ opacity: 0, y: -20, rotate: -8 }}
+          animate={{ opacity: 1, y: 0, rotate: -6 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="hidden lg:block absolute top-28 right-[8%] z-20"
         >
-          <div className="max-w-7xl mx-auto px-6 py-5 flex items-center gap-8">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground whitespace-nowrap">
-              Trusted by ⟶
-            </span>
-            <div className="flex-1 overflow-hidden marquee-mask">
-              <div className="flex gap-12 animate-marquee whitespace-nowrap">
-                {[...clients, ...clients].map((c, i) => (
-                  <span key={i} className="font-display text-2xl text-muted-foreground/60 italic hover:text-foreground transition">{c}</span>
-                ))}
-              </div>
+          <div className="relative">
+            <div className="w-px h-16 bg-foreground/40 mx-auto" />
+            <div className="bg-foreground text-background px-4 py-3 rounded-md text-xs font-mono uppercase tracking-wider shadow-2xl">
+              Only For Textile<br />Garment Shoot
             </div>
           </div>
         </motion.div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-20 grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center min-h-[100vh]">
+          {/* LEFT — Headline */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-border bg-background/60 backdrop-blur-md text-xs font-mono mb-8"
+            >
+              <span className="relative flex w-2 h-2">
+                <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-60" />
+                <span className="relative rounded-full w-2 h-2 bg-primary" />
+              </span>
+              <span className="text-muted-foreground tracking-wider uppercase">Fashion Videography Studio</span>
+            </motion.div>
+
+            <h1 className="font-display text-[clamp(2.6rem,7vw,6rem)] leading-[1.02] tracking-tight">
+              <span className="block"><AnimatedText text="Your Hardship" /></span>
+              <span className="block"><AnimatedText text="To Create" /></span>
+              <span className="block italic text-gradient"><AnimatedText text="Engaging Video" /></span>
+              <span className="block"><AnimatedText text="Content Ends Here!" /></span>
+            </h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.7 }}
+              className="mt-8 text-lg text-muted-foreground max-w-md leading-relaxed"
+            >
+              From outdoor shoots to video production, we provide top-notch
+              services under one roof.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.9 }}
+              className="mt-10 flex flex-wrap items-center gap-6"
+            >
+              <a
+                href="#contact"
+                className="group relative inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 hover:border-primary transition"
+              >
+                <span className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:rotate-45 transition">
+                  <ArrowRight className="w-4 h-4" />
+                </span>
+                <span className="font-medium tracking-wide uppercase text-sm">Contact us</span>
+              </a>
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                ))}
+                <span className="ml-2 text-sm text-muted-foreground">5.0 · 100+ brands</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT — Oval framed photo */}
+          <div className="relative h-[480px] md:h-[560px] lg:h-[640px]">
+            <Reveal variant="scale">
+              <div className="absolute inset-0 flex items-center justify-center">
+                {/* Outer concentric rings */}
+                <div className="absolute w-[88%] aspect-[3/4] rounded-full border border-foreground/15" />
+                <div className="absolute w-[78%] aspect-[3/4] rounded-full border border-foreground/25" />
+                {/* Main oval */}
+                <div className="relative w-[72%] aspect-[3/4] overflow-hidden rounded-full shadow-2xl animate-float">
+                  <img
+                    src={HERO}
+                    alt="Fashion model in vibrant attire"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Small secondary oval */}
+                <motion.div
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="absolute right-0 top-[18%] w-28 md:w-40 aspect-[3/4] overflow-hidden rounded-full border border-foreground/30 shadow-xl grayscale"
+                >
+                  <img src={HERO_2} alt="Detail" className="w-full h-full object-cover" />
+                </motion.div>
+                {/* Caption near small oval */}
+                <div className="absolute right-2 bottom-[12%] max-w-[180px] text-right">
+                  <div className="font-display italic text-xl md:text-2xl leading-tight">
+                    Unlock Your<br />Story, Frame by<br />Frame!
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
       </section>
 
-      {/* ============ MANIFESTO ============ */}
-      <section className="relative px-6 py-32 md:py-48">
-        <div className="max-w-6xl mx-auto">
+      {/* ============ BRANDS MARQUEE ============ */}
+      <section className="relative py-16 border-y border-border bg-secondary/30">
+        <div className="max-w-7xl mx-auto px-6">
           <Reveal>
-            <div className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground mb-10">
-              ⟢ Our manifesto
+            <div className="text-center mb-10">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                We collaborated with
+              </p>
+              <h2 className="font-display italic text-3xl md:text-4xl mt-2">
+                100+ Brands.
+              </h2>
             </div>
           </Reveal>
+          <Marquee>
+            {brands.map((b, i) => (
+              <span key={i} className="font-display italic text-3xl md:text-4xl text-muted-foreground/70 hover:text-foreground transition px-4">
+                {b}<span className="text-primary mx-6">✦</span>
+              </span>
+            ))}
+          </Marquee>
+        </div>
+      </section>
+
+      {/* ============ PORTFOLIO ============ */}
+      <section id="portfolio" className="relative px-6 py-32">
+        <div className="max-w-7xl mx-auto">
+          <Reveal variant="blur">
+            <div className="text-center mb-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Our Portfolio</p>
+              <h2 className="font-display text-5xl md:text-7xl mt-3">
+                Our <span className="italic text-gradient">Portfolio</span>
+              </h2>
+              <p className="mt-5 text-muted-foreground max-w-xl mx-auto">
+                Our portfolio revolves around working with several brands catering
+                to different fashion segments.
+              </p>
+            </div>
+          </Reveal>
+
           <Reveal delay={0.1}>
-            <p className="font-display text-3xl md:text-5xl lg:text-6xl leading-[1.1] tracking-tight max-w-5xl">
-              We believe the next decade of software belongs to{" "}
-              <span className="italic text-gradient-animated">teams that pair</span>{" "}
-              deep technical craft with applied artificial intelligence.{" "}
-              <span className="italic text-gradient-animated">We are that team.</span>
-            </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-10 mb-12">
+              {filters.map((f, i) => (
+                <button
+                  key={f}
+                  className={`px-5 py-2 rounded-full text-sm font-medium border transition ${
+                    i === 0
+                      ? "bg-foreground text-background border-foreground"
+                      : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {portfolio.map((p, i) => (
+              <Reveal key={i} delay={i * 0.06}>
+                <TiltCard intensity={4}>
+                  <div className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-card border border-border">
+                    <img
+                      src={p.img}
+                      alt={p.tag}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-70 group-hover:opacity-90 transition" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                      <div className="w-16 h-16 rounded-full bg-foreground/90 text-background flex items-center justify-center backdrop-blur">
+                        <Play className="w-5 h-5 ml-1" fill="currentColor" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                      <span className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full bg-background/70 backdrop-blur border border-border">
+                        {p.tag}
+                      </span>
+                      <span className="font-display italic text-sm">Reel #{(i + 1).toString().padStart(2, "0")}</span>
+                    </div>
+                  </div>
+                </TiltCard>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal>
+            <div className="mt-14 text-center">
+              <button className="inline-flex items-center gap-2 h-12 px-7 rounded-full border border-foreground/30 hover:border-primary hover:text-primary transition text-sm font-medium uppercase tracking-wider">
+                Load More
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      {/* ============ SERVICES GRID ============ */}
-      <section className="relative px-6 py-24">
+      {/* ============ SERVICES ============ */}
+      <section id="services" className="relative px-6 py-32 bg-secondary/40 border-y border-border">
         <div className="max-w-7xl mx-auto">
-          <Reveal>
-            <div className="flex items-end justify-between flex-wrap gap-6 mb-20">
-              <div>
-                <div className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">
-                  ⟢ What we do
-                </div>
-                <h2 className="font-sans text-5xl md:text-7xl font-medium tracking-[-0.04em] leading-[0.95] max-w-2xl">
-                  Six disciplines, <span className="font-display italic text-gradient">one team</span>.
-                </h2>
-              </div>
-              <Link to="/services" className="group inline-flex items-center gap-2 text-sm font-medium border border-border rounded-full px-5 py-3 hover:bg-secondary transition">
-                All services
-                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition duration-300" />
-              </Link>
+          <Reveal variant="blur">
+            <div className="text-center mb-16">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Our Bespoke Services</p>
+              <h2 className="font-display text-5xl md:text-7xl mt-3">
+                Our Bespoke <span className="italic text-gradient">Services</span>
+              </h2>
+              <p className="mt-5 text-muted-foreground max-w-xl mx-auto">
+                Add value to your Instagram business with services tailored to your
+                needs and budget.
+              </p>
             </div>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 border-t border-l border-border">
+          <div className="grid md:grid-cols-3 gap-6">
             {services.map((s, i) => (
-              <Reveal key={s.title} delay={i * 0.05}>
-                <TiltCard className="h-full" intensity={5}>
-                  <div className="group relative border-r border-b border-border p-8 md:p-10 h-full overflow-hidden hover:bg-secondary/40 transition duration-500">
-                    <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[var(--color-glow)]/0 group-hover:bg-[var(--color-glow)]/15 blur-3xl transition duration-700" />
-                    <div className="relative" style={{ transform: "translateZ(40px)" }}>
-                      <div className="flex items-baseline justify-between mb-12">
-                        <span className="font-mono text-xs text-muted-foreground">{s.n}</span>
-                        <s.icon className="w-5 h-5 text-muted-foreground group-hover:text-[var(--color-glow)] group-hover:scale-125 group-hover:rotate-6 transition duration-500" strokeWidth={1.5} />
-                      </div>
-                      <h3 className="font-display text-3xl md:text-4xl mb-4 leading-tight">{s.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">{s.desc}</p>
+              <Reveal key={s.title} delay={i * 0.08}>
+                <TiltCard intensity={5}>
+                  <div className="group relative h-full rounded-3xl overflow-hidden bg-card border border-border gradient-border">
+                    <div className="aspect-[4/5] overflow-hidden">
+                      <img
+                        src={s.img}
+                        alt={s.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                      />
                     </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
+                          <s.icon className="w-4 h-4 text-primary" />
+                        </div>
+                        <h3 className="font-display text-2xl">{s.title}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                    </div>
+                  </div>
+                </TiltCard>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal>
+            <div className="mt-14 text-center">
+              <a
+                href="#contact"
+                className="group inline-flex items-center gap-3 font-display italic text-2xl md:text-3xl hover:text-primary transition"
+              >
+                Get Ready To Shoot &amp; Play!
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition" />
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ============ PRICING ============ */}
+      <section id="pricing" className="relative px-6 py-32">
+        <div className="max-w-7xl mx-auto">
+          <Reveal variant="blur">
+            <div className="text-center mb-16">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Value-Packed Charges</p>
+              <h2 className="font-display text-5xl md:text-7xl mt-3">
+                Value-Packed <span className="italic text-gradient">Charges</span>
+              </h2>
+              <p className="mt-5 text-muted-foreground max-w-2xl mx-auto">
+                Our aim is to maintain transparency and deliver high-quality video
+                content at affordable rates, as per industry standards.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {pricing.map((p, i) => (
+              <Reveal key={p.name} delay={i * 0.08}>
+                <TiltCard intensity={4}>
+                  <div className={`relative h-full rounded-3xl p-8 border ${p.featured ? "bg-foreground text-background border-foreground" : "bg-card border-border"} flex flex-col`}>
+                    {p.featured && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-mono uppercase tracking-wider">
+                        Most popular
+                      </span>
+                    )}
+                    <p className={`font-mono text-xs uppercase tracking-wider ${p.featured ? "text-background/60" : "text-muted-foreground"}`}>{p.label}</p>
+                    <h3 className="font-display text-3xl mt-2">{p.name}</h3>
+                    <div className="mt-6 flex items-baseline gap-2">
+                      <span className="font-display text-5xl">{p.price}</span>
+                    </div>
+                    <p className={`mt-4 text-sm leading-relaxed ${p.featured ? "text-background/70" : "text-muted-foreground"}`}>{p.desc}</p>
+                    <ul className="mt-6 space-y-3 flex-1">
+                      {p.perks.map((perk) => (
+                        <li key={perk} className="flex items-center gap-3 text-sm">
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center ${p.featured ? "bg-background/20" : "bg-primary/15"}`}>
+                            <Check className={`w-3 h-3 ${p.featured ? "text-background" : "text-primary"}`} />
+                          </span>
+                          {perk}
+                        </li>
+                      ))}
+                    </ul>
+                    <a
+                      href="#contact"
+                      className={`mt-8 inline-flex items-center justify-center gap-2 h-12 rounded-full text-sm font-medium uppercase tracking-wider transition ${
+                        p.featured
+                          ? "bg-background text-foreground hover:opacity-90"
+                          : "bg-foreground text-background hover:opacity-90"
+                      }`}
+                    >
+                      {p.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </a>
                   </div>
                 </TiltCard>
               </Reveal>
@@ -217,96 +455,216 @@ function Index() {
         </div>
       </section>
 
-      {/* ============ SELECTED WORK ============ */}
-      <section className="relative px-6 py-32">
+      {/* ============ AUDIENCE ============ */}
+      <section className="relative px-6 py-24 bg-secondary/30 border-y border-border">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <div className="flex items-end justify-between flex-wrap gap-6 mb-20">
-              <div>
-                <div className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">
-                  ⟢ Selected work
-                </div>
-                <h2 className="font-sans text-5xl md:text-7xl font-medium tracking-[-0.04em] leading-[0.95]">
-                  Recently <span className="font-display italic text-gradient">shipped</span>.
-                </h2>
-              </div>
-              <Link to="/portfolio" className="group inline-flex items-center gap-2 text-sm font-medium border border-border rounded-full px-5 py-3 hover:bg-secondary transition">
-                View all
-                <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition duration-300" />
-              </Link>
+            <div className="text-center mb-14">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Whom we cater to</p>
+              <h2 className="font-display text-5xl md:text-6xl mt-3">
+                Whom do we <span className="italic text-gradient">cater</span> to?
+              </h2>
+              <p className="mt-4 text-muted-foreground">We have expertise in fashion videography, catering to:</p>
             </div>
           </Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {audience.map((a, i) => (
+              <Reveal key={a.label} delay={i * 0.06}>
+                <TiltCard intensity={6}>
+                  <div className="group rounded-2xl border border-border bg-card p-8 text-center hover:border-primary/50 transition">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-primary/15 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition">
+                      <a.icon className="w-7 h-7 text-primary" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="font-display text-xl">{a.label}</h3>
+                  </div>
+                </TiltCard>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal>
+            <div className="mt-12 text-center">
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-3 px-7 h-12 rounded-full bg-primary text-primary-foreground font-medium uppercase tracking-wider text-sm hover:opacity-90 transition"
+              >
+                Grab the deal right now
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
+      {/* ============ TESTIMONIALS ============ */}
+      <section className="relative px-6 py-32">
+        <div className="max-w-7xl mx-auto">
+          <Reveal variant="blur">
+            <div className="text-center mb-16">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Success Stories</p>
+              <h2 className="font-display text-5xl md:text-6xl mt-3">
+                Success Stories of <span className="italic text-gradient">Our Partners</span>
+              </h2>
+              <p className="mt-4 text-muted-foreground">Our work speaks more than words can.</p>
+            </div>
+          </Reveal>
           <div className="grid md:grid-cols-2 gap-6">
-            {work.map((w, i) => (
-              <Reveal key={w.title} delay={i * 0.08}>
-                <a href="#" className="group block relative overflow-hidden rounded-3xl border border-border aspect-[5/4] bg-card">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${w.color}`} />
-                  <div className="absolute inset-0 bg-grid opacity-30" />
-                  <div className="absolute inset-0 bg-noise mix-blend-overlay" />
-
-                  {/* Floating mark */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="font-display text-[10rem] md:text-[14rem] italic opacity-10 group-hover:opacity-25 group-hover:scale-110 transition duration-700">
-                      {w.title.charAt(0)}
+            {testimonials.map((t, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <div className="rounded-3xl border border-border bg-card p-8 h-full">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  <p className="font-display text-xl md:text-2xl leading-relaxed italic">
+                    “{t.quote}”
+                  </p>
+                  <div className="mt-6 pt-6 border-t border-border flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-display text-primary">
+                      {t.name[0]}
+                    </div>
+                    <div>
+                      <div className="font-medium">{t.name}</div>
+                      <div className="text-sm text-muted-foreground">{t.brand}</div>
                     </div>
                   </div>
-
-                  {/* Content */}
-                  <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-between">
-                    <div className="flex items-start justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground bg-background/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-border">
-                        {w.tag}
-                      </span>
-                      <div className="w-11 h-11 rounded-full bg-background/60 backdrop-blur-md border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-500 group-hover:rotate-45">
-                        <ArrowUpRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                    <div className="flex items-end justify-between">
-                      <h3 className="font-display text-4xl md:text-5xl">{w.title}</h3>
-                      <span className="font-mono text-xs text-muted-foreground">{w.year}</span>
-                    </div>
-                  </div>
-                </a>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============ FINAL CTA ============ */}
-      <section className="relative px-6 py-32">
+      {/* ============ CTA BANNER ============ */}
+      <section className="relative px-6 py-20">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card p-12 md:p-20 text-center glow-ring">
-              <div className="absolute inset-0 bg-aurora opacity-50" />
+            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-primary/15 via-card to-accent/15 p-12 md:p-16 text-center">
               <div className="absolute inset-0 bg-grid opacity-30" />
+              <div className="absolute inset-0 bg-noise mix-blend-overlay" />
               <div className="relative">
-                <div className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground mb-8">
-                  ⟢ Let's collaborate
-                </div>
-                <h2 className="font-sans text-5xl md:text-7xl lg:text-8xl font-medium tracking-[-0.04em] leading-[0.95]">
-                  Have an idea<br />
-                  <span className="font-display italic text-gradient">worth building</span>?
+                <h2 className="font-display text-4xl md:text-6xl">
+                  Go Beyond the Trends,<br />
+                  <span className="italic text-gradient">Get Reel-istic Reels Now!</span>
                 </h2>
-                <p className="mt-8 text-lg text-muted-foreground max-w-xl mx-auto">
-                  Tell us about it. We respond within one business day with a
-                  plan, a timeline and a price.
+                <p className="mt-5 text-muted-foreground max-w-2xl mx-auto">
+                  With our user-generated video content, get ready to supercharge
+                  your brand visibility organically!
                 </p>
-                <div className="mt-12">
-                  <Link
-                    to="/contact"
-                    className="group inline-flex items-center gap-2 h-14 px-8 rounded-full bg-foreground text-background font-medium hover:opacity-90 transition"
-                  >
-                    Start the conversation
-                    <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition duration-300" />
-                  </Link>
-                </div>
+                <a
+                  href="#contact"
+                  className="mt-10 inline-flex items-center gap-3 h-14 px-8 rounded-full bg-foreground text-background font-medium uppercase tracking-wider text-sm hover:opacity-90 transition"
+                >
+                  Collaborate with us
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
+
+      {/* ============ CONTACT ============ */}
+      <section id="contact" className="relative px-6 py-24">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <Reveal variant="blur">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— Get in Touch</p>
+            <h2 className="font-display text-5xl md:text-6xl mt-3">
+              Get in Touch <span className="italic text-gradient">with us!</span>
+            </h2>
+            <p className="mt-5 text-muted-foreground max-w-md">
+              In case you find any difficulties or have any kind of query, you can
+              easily connect with us on our official number — also available on WhatsApp.
+            </p>
+            <a
+              href="tel:+919512323450"
+              className="mt-8 inline-flex items-center gap-4 group"
+            >
+              <span className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:scale-110 transition">
+                <Phone className="w-5 h-5" />
+              </span>
+              <span>
+                <span className="block text-xs uppercase tracking-wider text-muted-foreground">Call us</span>
+                <span className="block font-display text-3xl">+91 95123 23450</span>
+              </span>
+            </a>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <ContactForm />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ============ FAQ ============ */}
+      <section id="faq" className="relative px-6 py-32">
+        <div className="max-w-4xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-14">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">— FAQ</p>
+              <h2 className="font-display text-5xl md:text-6xl mt-3">
+                Frequently <span className="italic text-gradient">Asked</span>
+              </h2>
+            </div>
+          </Reveal>
+          <div className="space-y-3">
+            {faqs.map((f, i) => (
+              <Reveal key={i} delay={i * 0.04}>
+                <FaqItem q={f.q} a={f.a} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-6 px-6 py-5 text-left"
+      >
+        <span className="font-display text-lg md:text-xl">{q}</span>
+        <span className="w-9 h-9 rounded-full border border-border flex items-center justify-center shrink-0">
+          {open ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+        </span>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="overflow-hidden"
+      >
+        <p className="px-6 pb-6 text-muted-foreground leading-relaxed">{a}</p>
+      </motion.div>
+    </div>
+  );
+}
+
+function ContactForm() {
+  const [sent, setSent] = useState(false);
+  return (
+    <form
+      onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+      className="rounded-3xl border border-border bg-card p-8 md:p-10 space-y-4"
+    >
+      <h3 className="font-display text-2xl">Tell us about your shoot</h3>
+      <div className="grid md:grid-cols-2 gap-4">
+        <input required name="name" placeholder="Your name" className="h-12 rounded-xl border border-border bg-background/50 px-4 text-sm focus:outline-none focus:border-primary transition" />
+        <input required type="tel" name="phone" placeholder="Phone / WhatsApp" className="h-12 rounded-xl border border-border bg-background/50 px-4 text-sm focus:outline-none focus:border-primary transition" />
+      </div>
+      <input name="brand" placeholder="Brand (optional)" className="h-12 w-full rounded-xl border border-border bg-background/50 px-4 text-sm focus:outline-none focus:border-primary transition" />
+      <textarea required rows={4} name="message" placeholder="What would you like to shoot?" className="w-full rounded-xl border border-border bg-background/50 px-4 py-3 text-sm focus:outline-none focus:border-primary transition resize-none" />
+      <button
+        type="submit"
+        className="w-full h-13 py-3 rounded-xl bg-foreground text-background font-medium uppercase tracking-wider text-sm hover:opacity-90 transition flex items-center justify-center gap-2"
+      >
+        {sent ? "Thanks — we'll be in touch!" : (<>Send enquiry <ArrowRight className="w-4 h-4" /></>)}
+      </button>
+    </form>
   );
 }
