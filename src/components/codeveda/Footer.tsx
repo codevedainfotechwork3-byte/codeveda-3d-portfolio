@@ -36,9 +36,9 @@ export function Footer() {
         <div>
           <h4 className="font-display text-xl mb-4">Reach us</h4>
           <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-start gap-2"><Phone className="w-4 h-4 mt-0.5 text-primary" /> +91 95123 23450</li>
-            <li className="flex items-start gap-2"><Mail className="w-4 h-4 mt-0.5 text-primary" /> hello@reelwale.studio</li>
-            <li className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 text-primary" /> Surat, India</li>
+            <li className="flex items-start gap-2"><Phone className="w-4 h-4 mt-0.5 text-primary" /><span>+91 95123 23450</span></li>
+            <li className="flex items-start gap-2"><Mail className="w-4 h-4 mt-0.5 text-primary" /><span>hello@reelwale.studio</span></li>
+            <li className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 text-primary" /><span>Surat, India</span></li>
           </ul>
         </div>
       </div>

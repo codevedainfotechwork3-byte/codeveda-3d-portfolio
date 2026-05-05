@@ -1,14 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight, Phone, Star, Check, Plus, Minus, Play,
+  ArrowRight, Phone, Star, Check, Plus, Minus, Play, Volume2, VolumeX,
   Camera, Building2, MapPinned, ShoppingBag, Globe, Store, Scissors,
 } from "lucide-react";
 import { Reveal } from "@/components/codeveda/Reveal";
 import { AnimatedText } from "@/components/codeveda/AnimatedText";
 import { TiltCard } from "@/components/codeveda/TiltCard";
 import { Marquee } from "@/components/codeveda/Marquee";
+import { MagneticButton } from "@/components/codeveda/MagneticButton";
+import { ShowreelLightbox } from "@/components/codeveda/ShowreelLightbox";
+import { HoverVideoCard } from "@/components/codeveda/HoverVideoCard";
+import { ProcessTimeline } from "@/components/codeveda/ProcessTimeline";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,6 +29,18 @@ export const Route = createFileRoute("/")({
 
 const HERO = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80";
 const HERO_2 = "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80";
+
+// Free fashion B-roll (Coverr / Pexels CDN)
+const HERO_VIDEO = "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4";
+const SHOWREEL = "https://videos.pexels.com/video-files/4434242/4434242-hd_1920_1080_25fps.mp4";
+const REEL_LOOPS = [
+  "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4",
+  "https://videos.pexels.com/video-files/4434242/4434242-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/4488692/4488692-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/5709069/5709069-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/4630050/4630050-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/4587959/4587959-hd_1920_1080_25fps.mp4",
+];
 
 const brands = [
   "ATELIER", "MAISON", "SAREE.CO", "INDIRA", "KIANA", "RANGREZ", "AURELIA", "VIMARSH",
@@ -125,14 +142,51 @@ const faqs = [
 ];
 
 function Home() {
+  const [reelOpen, setReelOpen] = useState(false);
+  const [reelSrc, setReelSrc] = useState(SHOWREEL);
+  const [muted, setMuted] = useState(true);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  const openReel = (src: string) => { setReelSrc(src); setReelOpen(true); };
+
   return (
     <>
+      <ShowreelLightbox open={reelOpen} onClose={() => setReelOpen(false)} src={reelSrc} />
+
       {/* ============ HERO ============ */}
-      <section className="relative min-h-[100vh] overflow-hidden">
-        <div className="absolute inset-0 bg-grid opacity-50" />
+      <section ref={heroRef} className="relative min-h-[100vh] overflow-hidden">
+        {/* Cinematic background video */}
+        <motion.div style={{ y: heroY, scale: heroScale, opacity: heroOpacity }} className="absolute inset-0 -z-10">
+          <video
+            src={HERO_VIDEO}
+            autoPlay
+            muted={muted}
+            loop
+            playsInline
+            preload="metadata"
+            poster={HERO}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
+        </motion.div>
         <div className="absolute inset-0 bg-noise mix-blend-overlay pointer-events-none" />
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
+        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+
+        {/* Mute toggle */}
+        <button
+          onClick={() => setMuted((m) => !m)}
+          aria-label={muted ? "Unmute background" : "Mute background"}
+          className="absolute bottom-6 left-6 z-20 w-11 h-11 rounded-full border border-border bg-background/60 backdrop-blur flex items-center justify-center hover:bg-secondary transition"
+        >
+          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
 
         {/* Floating "only for textile" tag */}
         <motion.div
@@ -188,15 +242,24 @@ function Home() {
               transition={{ duration: 0.7, delay: 0.9 }}
               className="mt-10 flex flex-wrap items-center gap-6"
             >
-              <a
+              <MagneticButton
                 href="#contact"
-                className="group relative inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 hover:border-primary transition"
+                className="group relative inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 bg-background/40 backdrop-blur hover:border-primary transition"
               >
-                <span className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center group-hover:rotate-45 transition">
+                <span className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition">
                   <ArrowRight className="w-4 h-4" />
                 </span>
                 <span className="font-medium tracking-wide uppercase text-sm">Contact us</span>
-              </a>
+              </MagneticButton>
+              <MagneticButton
+                onClick={() => openReel(SHOWREEL)}
+                className="group inline-flex items-center gap-3 h-14 pl-2 pr-7 rounded-full border border-foreground/20 bg-background/40 backdrop-blur hover:border-foreground transition"
+              >
+                <span className="w-10 h-10 rounded-full border border-foreground/40 flex items-center justify-center">
+                  <Play className="w-4 h-4 ml-0.5" fill="currentColor" />
+                </span>
+                <span className="font-medium tracking-wide uppercase text-sm">Watch Showreel</span>
+              </MagneticButton>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-primary text-primary" />
@@ -302,25 +365,13 @@ function Home() {
             {portfolio.map((p, i) => (
               <Reveal key={i} delay={i * 0.06}>
                 <TiltCard intensity={4}>
-                  <div className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-card border border-border">
-                    <img
-                      src={p.img}
-                      alt={p.tag}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-70 group-hover:opacity-90 transition" />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                      <div className="w-16 h-16 rounded-full bg-foreground/90 text-background flex items-center justify-center backdrop-blur">
-                        <Play className="w-5 h-5 ml-1" fill="currentColor" />
-                      </div>
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full bg-background/70 backdrop-blur border border-border">
-                        {p.tag}
-                      </span>
-                      <span className="font-display italic text-sm">Reel #{(i + 1).toString().padStart(2, "0")}</span>
-                    </div>
-                  </div>
+                  <HoverVideoCard
+                    poster={p.img}
+                    videoSrc={REEL_LOOPS[i % REEL_LOOPS.length]}
+                    tag={p.tag}
+                    index={i}
+                    onClick={() => openReel(REEL_LOOPS[i % REEL_LOOPS.length])}
+                  />
                 </TiltCard>
               </Reveal>
             ))}
@@ -393,6 +444,9 @@ function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* ============ PROCESS ============ */}
+      <ProcessTimeline />
 
       {/* ============ PRICING ============ */}
       <section id="pricing" className="relative px-6 py-32">
