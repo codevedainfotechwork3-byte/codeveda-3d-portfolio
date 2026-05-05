@@ -1,14 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight, Phone, Star, Check, Plus, Minus, Play,
+  ArrowRight, Phone, Star, Check, Plus, Minus, Play, Volume2, VolumeX,
   Camera, Building2, MapPinned, ShoppingBag, Globe, Store, Scissors,
 } from "lucide-react";
 import { Reveal } from "@/components/codeveda/Reveal";
 import { AnimatedText } from "@/components/codeveda/AnimatedText";
 import { TiltCard } from "@/components/codeveda/TiltCard";
 import { Marquee } from "@/components/codeveda/Marquee";
+import { MagneticButton } from "@/components/codeveda/MagneticButton";
+import { ShowreelLightbox } from "@/components/codeveda/ShowreelLightbox";
+import { HoverVideoCard } from "@/components/codeveda/HoverVideoCard";
+import { ProcessTimeline } from "@/components/codeveda/ProcessTimeline";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,6 +29,18 @@ export const Route = createFileRoute("/")({
 
 const HERO = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80";
 const HERO_2 = "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80";
+
+// Free fashion B-roll (Coverr / Pexels CDN)
+const HERO_VIDEO = "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4";
+const SHOWREEL = "https://videos.pexels.com/video-files/4434242/4434242-hd_1920_1080_25fps.mp4";
+const REEL_LOOPS = [
+  "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4",
+  "https://videos.pexels.com/video-files/4434242/4434242-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/4488692/4488692-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/5709069/5709069-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/4630050/4630050-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/4587959/4587959-hd_1920_1080_25fps.mp4",
+];
 
 const brands = [
   "ATELIER", "MAISON", "SAREE.CO", "INDIRA", "KIANA", "RANGREZ", "AURELIA", "VIMARSH",
