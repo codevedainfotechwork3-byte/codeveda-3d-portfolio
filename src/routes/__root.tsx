@@ -6,6 +6,7 @@ import { Nav } from "@/components/codeveda/Nav";
 import { Footer } from "@/components/codeveda/Footer";
 import { SpotlightCursor } from "@/components/codeveda/SpotlightCursor";
 import { PageTransition } from "@/components/codeveda/PageTransition";
+import { IntroOverlay } from "@/components/codeveda/IntroOverlay";
 
 function NotFoundComponent() {
   return (
@@ -73,6 +74,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <ThemeProvider>
+      <IntroOverlay />
       <SpotlightCursor />
       <Nav />
       <main className="pt-20">
