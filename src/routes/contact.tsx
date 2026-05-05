@@ -50,12 +50,13 @@ function Contact() {
   };
 
   return (
-    <div className="px-6 py-24">
+    <div className="relative px-6 py-24 overflow-hidden">
+      <div className="bg-aurora-live opacity-40" />
       <div className="max-w-7xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-16">
-        <Reveal>
+        <Reveal variant="blur">
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">— Contact</span>
           <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tighter mt-3">
-            Let's build<br /> <span className="text-gradient">something great</span>.
+            Let's build<br /> <span className="italic text-gradient-animated">something great</span>.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-md">
             Tell us about your project. We'll respond within one business day
@@ -85,7 +86,7 @@ function Contact() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <form onSubmit={onSubmit} className="card-elevated rounded-3xl p-8 md:p-10 space-y-5 glow-ring">
+          <form onSubmit={onSubmit} className="relative card-elevated gradient-border rounded-3xl p-8 md:p-10 space-y-5 glow-ring">
             <div className="grid md:grid-cols-2 gap-4">
               <Field name="name" label="Your name" placeholder="Ada Lovelace" required />
               <Field name="email" label="Email" type="email" placeholder="ada@company.com" required />
