@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/codeveda/ThemeProvider";
 import { Nav } from "@/components/codeveda/Nav";
 import { Footer } from "@/components/codeveda/Footer";
 import { SpotlightCursor } from "@/components/codeveda/SpotlightCursor";
+import { PageTransition } from "@/components/codeveda/PageTransition";
 
 function NotFoundComponent() {
   return (
@@ -77,7 +78,9 @@ function RootComponent() {
       <SpotlightCursor />
       <Nav />
       <main className="pt-16">
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </main>
       <Footer />
     </ThemeProvider>

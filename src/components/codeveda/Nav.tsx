@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { useTheme } from "./ThemeProvider";
@@ -22,19 +23,34 @@ export function Nav() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Logo />
         <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`px-4 py-2 text-sm rounded-full transition ${
-                pathname === l.to
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) => {
+            const active = pathname === l.to;
+            return (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`group relative px-4 py-2 text-sm rounded-full transition ${
+                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span className="relative">
+                  {l.label}
+                  <span
+                    className={`pointer-events-none absolute -bottom-1 left-0 h-px w-full origin-left bg-gradient-to-r from-[var(--color-glow)] to-[var(--color-glow-2)] transition-transform duration-500 ease-out ${
+                      active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </span>
+                {active && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 -z-10 rounded-full bg-secondary/60"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex items-center gap-2">
           <button
