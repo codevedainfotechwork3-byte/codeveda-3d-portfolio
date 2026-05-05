@@ -145,6 +145,10 @@ function Home() {
   const [reelOpen, setReelOpen] = useState(false);
   const [reelSrc, setReelSrc] = useState(SHOWREEL);
   const [muted, setMuted] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("View all");
+  const filteredPortfolio = activeFilter === "View all"
+    ? portfolio
+    : portfolio.filter((p) => p.tag === activeFilter);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 160]);
@@ -345,24 +349,15 @@ function Home() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="flex flex-wrap justify-center gap-2 mt-10 mb-12">
-              {filters.map((f, i) => (
-                <button
-                  key={f}
-                  className={`px-5 py-2 rounded-full text-sm font-medium border transition ${
-                    i === 0
-                      ? "bg-foreground text-background border-foreground"
-                      : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
+            <FilterChips
+              items={filters}
+              active={activeFilter}
+              onChange={setActiveFilter}
+            />
           </Reveal>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            {portfolio.map((p, i) => (
+            {filteredPortfolio.map((p, i) => (
               <Reveal key={i} delay={i * 0.06}>
                 <TiltCard intensity={4}>
                   <HoverVideoCard
@@ -695,6 +690,36 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       >
         <p className="px-6 pb-6 text-muted-foreground leading-relaxed">{a}</p>
       </motion.div>
+    </div>
+  );
+}
+
+function FilterChips({ items, active, onChange }: { items: readonly string[]; active: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex flex-wrap justify-center gap-2 mt-10 mb-12">
+      {items.map((f) => {
+        const isActive = f === active;
+        return (
+          <button
+            key={f}
+            onClick={() => onChange(f)}
+            className={`relative px-5 py-2 rounded-full text-sm font-medium border transition ${
+              isActive
+                ? "text-background border-foreground"
+                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+            }`}
+          >
+            {isActive && (
+              <motion.span
+                layoutId="filter-pill"
+                className="absolute inset-0 -z-10 rounded-full bg-foreground"
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              />
+            )}
+            <span className="relative">{f}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

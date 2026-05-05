@@ -76,6 +76,7 @@ function RootComponent() {
     <ThemeProvider>
       <IntroOverlay />
       <SpotlightCursor />
+      <div className="film-grain" aria-hidden />
       <Nav />
       <main className="pt-20">
         <PageTransition>
