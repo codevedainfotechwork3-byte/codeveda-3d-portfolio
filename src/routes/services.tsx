@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Brain, Code2, Layers, Globe2, Workflow, Shield } from "lucide-react";
 import { Reveal } from "@/components/codeveda/Reveal";
+import { TiltCard } from "@/components/codeveda/TiltCard";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -25,12 +26,14 @@ const services = [
 
 function Services() {
   return (
-    <div className="px-6 py-24">
+    <div className="relative px-6 py-24 overflow-hidden">
+      <div className="bg-aurora-live opacity-40" />
+      <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
       <div className="max-w-7xl mx-auto">
-        <Reveal>
+        <Reveal variant="blur">
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">— Services</span>
           <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tighter mt-3 max-w-4xl">
-            End-to-end <span className="text-gradient">IT engineering</span> for the AI era.
+            End-to-end <span className="italic text-gradient-animated">IT engineering</span> for the AI era.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
             From the first prototype to enterprise-scale deployments, we operate
@@ -41,20 +44,25 @@ function Services() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-20">
           {services.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
-              <div className="group card-elevated rounded-2xl p-7 h-full hover:border-[var(--color-glow)]/40 transition">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-glow)]/20 to-[var(--color-glow-2)]/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                  <s.icon className="w-5 h-5 text-[var(--color-glow)]" />
+              <TiltCard className="h-full" intensity={6}>
+                <div className="group card-elevated gradient-border rounded-2xl p-7 h-full hover:border-[var(--color-glow)]/40 transition relative overflow-hidden">
+                  <div className="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-[var(--color-glow)]/0 group-hover:bg-[var(--color-glow)]/15 blur-3xl transition duration-700" />
+                  <div style={{ transform: "translateZ(30px)" }}>
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-glow)]/20 to-[var(--color-glow-2)]/20 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition duration-500">
+                      <s.icon className="w-5 h-5 text-[var(--color-glow)]" />
+                    </div>
+                    <h2 className="font-display text-2xl font-semibold mb-3">{s.title}</h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {s.tags.map((t) => (
+                        <span key={t} className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-secondary text-muted-foreground">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <h2 className="font-display text-xl font-semibold mb-3">{s.title}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {s.tags.map((t) => (
-                    <span key={t} className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-secondary text-muted-foreground">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              </TiltCard>
             </Reveal>
           ))}
         </div>
